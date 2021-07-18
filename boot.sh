@@ -14,7 +14,11 @@ echo 'Extracting rust tar'
 stat build/rust-$CHAN-$ARCH-unknown-linux-musl > /dev/null 2> /dev/null \
 || tar -xf build/rust.tar -C build
 
-make -C libgcc
+echo 'Building libgcc_s.so'
+stat build/libgcc_s.so > /dev/null 2> /dev/null \
+|| clang -shared -o build/libgcc_s.so \
+-Wl,--allow-multiple-definition -Wl,--whole-archive \
+$(clang -print-libgcc-file-name)
 
 mkdir -p build/rust-root
 
@@ -30,7 +34,7 @@ stat build/rust-root/lib/rustlib/uninstall.sh > /dev/null 2> /dev/null \
 # by libunwind
 echo 'Copying libgcc_s shim'
 stat $(pwd)/build/rust-root/lib/libgcc_s.so.1 > /dev/null 2> /dev/null \
-|| cp $(pwd)/libgcc/libgcc_s.so $(pwd)/build/rust-root/lib/libgcc_s.so.1
+|| cp $(pwd)/build/libgcc_s.so $(pwd)/build/rust-root/lib/libgcc_s.so.1
 
 # Symlink libunwind for dynamic builds to link to
 echo 'Symlinking libunwind'
