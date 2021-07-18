@@ -7,3 +7,7 @@ releases.
  - POSIX
  - libunwind
  - curl
+
+## How to build rust
+
+Add `--local-rust-root=path/to/this/build/rust-root` to the `configure` args
